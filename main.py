@@ -11,7 +11,7 @@ from os import environ
 load_dotenv()
 
 app = FastAPI(
-    title="Azure File Store Web Application Example",
+    title="Azure Blobs API Example",
     redoc_url=None
 )
 
