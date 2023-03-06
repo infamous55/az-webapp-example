@@ -59,7 +59,7 @@ storageaccountid=$( \
     --resource-group "<resourcegroupname>" \
     --name "<storageaccountname>" \
     --query "id" \
-  | sed -e 's/^"//' -e 's/"$//'
+  | sed -e 's/^"//' -e 's/"$//' \
 )
 ```
 
@@ -91,3 +91,74 @@ uvicorn main:app --reload
 ```
 
 Access at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+## Deploying to Azure
+
+After you run the application locally, you can get it working on Azure by following the next steps.
+
+1. Deploy it to Azure Web App.
+
+```bash
+az webapp up \
+  --name "<appname>" \
+  --resource-group "<resourcegroupname>" \
+  --location "<location>" \
+  --runtime "PYTHON:3.8" \
+  --sku "B1"
+```
+
+2. Set the environment variables.
+
+```bash
+az webapp config appsettings set \
+  --resource-group "<resourcegroupname>" \
+  --name "<appname>" \
+  --settings STORAGE_ACCOUNT_URL="https://<storageaccountname>.blob.core.windows.net"
+```
+
+```bash
+az webapp config appsettings set \
+  --resource-group "<resourcegroupname>" \
+  --name "<appname>" \
+  --settings CONTAINER_NAME="<containername>"
+```
+
+3. Set the startup file.
+
+```bash
+az webapp config set \
+  --resource-group "<resourcegroupname>" \
+  --name "<appname>" \
+  --startup-file "startup.sh"
+```
+
+4. Create a Managed Identity for your application.
+
+```bash
+az webapp identity assign \
+  --resource-group "<resourcegroupname>" \
+  --name "<appname>"
+```
+
+5. Save the Managed Identity to a variable (without quotation marks).
+
+```bash
+webappid=$( \
+  az webapp identity show \
+    --resource-group "<resourcegroupname>" \
+    --name "<appname>" \
+    --query "principalId" \
+  | sed -e 's/^"//' -e 's/"$//' \
+)
+```
+
+6. Create a role-assignment.
+
+```bash
+az role assignment create \
+  --assignee $webappid \
+  --resource-group "<resourcegroupname>" \
+  --role "Storage Blob Data Contributor"
+```
+
+The code also contains a workflow for CI/CD using GitHub Actions. You can enable this from the Deployment Center in the Azure Portal. Make sure to change the `app-name` property to the name of your Azure Web App. Commit and push your project to a GitHub repository for the workflow to execute.
