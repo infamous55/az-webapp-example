@@ -51,6 +51,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'py-webapp-example'
+          app-name: '<appname>'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3BD68B0D796248A381BCD9B87D6E6334 }}
