@@ -162,3 +162,11 @@ az role assignment create \
 ```
 
 The code also contains a workflow for CI/CD using GitHub Actions. You can enable this from the Deployment Center in the Azure Portal. Make sure to change the `app-name` property to the name of your Azure Web App. Commit and push your project to a GitHub repository for the workflow to execute.
+
+## Cleaning up
+
+To clean up, delete the resource group that you used.
+
+```bash
+az group delete --name "<resourcegroupname>"
+```
