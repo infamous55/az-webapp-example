@@ -46,7 +46,7 @@ class UploadResponse(BaseModel):
 
 @app.post("/upload", status_code=status.HTTP_201_CREATED, response_model=UploadResponse, tags=["files"])
 def upload_file(file: UploadFile):
-    file_contents=file.file.read()
+    file_contents = file.file.read()
     # Upload using the container client:
     container_client.upload_blob(name=file.filename, data=file_contents, length=file.size)
     # Upload using a blob client:
@@ -82,7 +82,7 @@ def update_file(file: UploadFile, filename: str = Path()):
     if not blob_client.exists():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     # Overwrite using the container client:
-    file_contents=file.file.read()
+    file_contents = file.file.read()
     # container_client.upload_blob(name=file.filename, data=file_contents, length=file.size, overwrite=True)
     # Overwrite using the blob client
     blob_client.upload_blob(data=file_contents, length=file.size, overwrite=True)
